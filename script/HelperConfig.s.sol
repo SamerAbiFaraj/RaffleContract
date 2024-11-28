@@ -34,7 +34,9 @@ contract HelperConfig is Script, CodeConstants {
     mapping(uint256 chainId => NetworkConfig) public networkConfigs;
 
     constructor() {
-        networkConfigs[ETH_SEPOLIA_CHAIN_ID] = getSepoliaEthConfig();
+        if (block.chainid == 11155111)
+            networkConfigs[ETH_SEPOLIA_CHAIN_ID] = getSepoliaEthConfig();
+        else networkConfigs[LOCAL_CHAIN_ID] = getOrCreateAnvilEthConfig();
     }
 
     function getConfigByChainId(
@@ -52,7 +54,7 @@ contract HelperConfig is Script, CodeConstants {
     }
 
     function getSepoliaEthConfig() public pure returns (NetworkConfig memory) {
-        return (
+        return
             NetworkConfig({
                 entranceFee: 0.01 ether,
                 interval: 30,
@@ -60,8 +62,7 @@ contract HelperConfig is Script, CodeConstants {
                 gasLane: 0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
                 subscriptionId: 0,
                 callbackGasLimit: 500000
-            })
-        );
+            });
     }
 
     function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
@@ -80,7 +81,7 @@ contract HelperConfig is Script, CodeConstants {
 
         localNetworkConfig = NetworkConfig({
             entranceFee: 0.01 ether,
-            interval: 30,
+            interval: 30, //30seconds
             vrfCoordinator: address(vrfCoordinatorMock),
             gasLane: 0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
             subscriptionId: 0,
